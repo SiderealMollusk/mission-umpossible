@@ -28,7 +28,6 @@ services:
     restart: always
     environment:
       - CF_TOKEN
-
 networks:
   default:
     ipam:
