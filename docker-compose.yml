@@ -21,6 +21,15 @@ services:
     #   - /home/austin/log/nginx:/var/log/nginx
     restart: always
 
+  signal-api:
+    image: bbernhard/signal-cli-rest-api:latest
+    environment:
+      - MODE=native
+    ports:
+      - "8756:8080"
+    volumes:
+      - ./signal-cli-data:/home/.local/share/signal-cli
+    restart: always
 
   cloudflared:
     image: cloudflare/cloudflared:latest
@@ -28,6 +37,18 @@ services:
     restart: always
     environment:
       - CF_TOKEN
+
+  test-runner:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: >
+      sh -c "pip install --no-cache-dir -r requirements-dev.txt && pytest --tb=short -q tests"
+    depends_on:
+      - flask
+      - signal-api
+
 networks:
   default:
     ipam:
