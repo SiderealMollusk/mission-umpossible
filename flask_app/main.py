@@ -1,6 +1,6 @@
-from flask import Flask, render_template, jsonify, abort
+from flask import Flask, render_template, jsonify, abort # type: ignore
 # from uuid_extensions import uuid7, uuid7str, uuid_to_datetime
-from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.middleware.proxy_fix import ProxyFix # type: ignore
 import re
 from uuid7 import uuid7, uuid7str, uuid_to_datetime
 
