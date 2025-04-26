@@ -8,6 +8,7 @@ services:
     environment:
       - FLASK_RUN_HOST=0.0.0.0
     restart: always
+    stop_signal: SIGINT
 
   nginx:
     build: 
@@ -30,6 +31,18 @@ services:
     volumes:
       - ./signal-cli-data:/home/.local/share/signal-cli
     restart: always
+  signal-watcher:
+    build:
+      context: ./signal-watcher
+    environment:
+      - SIGNAL_NUMBER=+15107302276
+      - SIGNAL_API=http://signal-api:8080
+      - WEBHOOK_URL=https://uopvhhbushcwwqpbswpm.supabase.co/functions/v1/receive-from-signal
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - DELAY_RANGE=3,12
+    depends_on:
+      - signal-api
+    restart: always
 
   cloudflared:
     image: cloudflare/cloudflared:latest
@@ -38,19 +51,17 @@ services:
     environment:
       - CF_TOKEN
 
-  test-runner:
-    image: python:3.11-slim
-    working_dir: /app
+  # mu-dash: React Admin Dashboard
+  mu-dash:
+    build:
+      context: ./mu-dash  # Pointing to the directory where Dockerfile for React app is located
+      dockerfile: Dockerfile
+    
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_RUNTIME_ENV=docker
+      - CHOKIDAR_USEPOLLING=true
     volumes:
-      - .:/app
-    command: >
-      sh -c "pip install --no-cache-dir -r requirements-dev.txt && pytest --tb=short -q tests"
-    depends_on:
-      - flask
-      - signal-api
-
-networks:
-  default:
-    ipam:
-      config:
-        - subnet: 172.29.0.0/16
+      - ./mu-dash:/app
+    restart: always

@@ -11,4 +11,56 @@ This pattern also is used to deploy the landing page for the [MonchMatch - Tinde
 
 ----
 
-I'm trying to add in signal.
+added signal and testing containers
+
+---
+
+# Useful Commands
+
+## Useful Commands
+
+### 🐳 Docker / Compose
+- Start services in background:  
+  ```bash
+  docker-compose up -d
+  ```
+
+- Stop all services:  
+  ```bash
+  docker-compose down
+  ```
+
+- Restart just the Flask container:  
+  ```bash
+  docker-compose restart flask
+  ```
+
+- View logs for Nginx:  
+  ```bash
+  docker-compose logs -f nginx
+  ```
+
+### 🧪 Running Tests
+- Run all tests:  
+  ```bash
+  docker-compose run --rm test-runner
+  ```
+
+- Run only Flask tests:  
+  ```bash
+  docker-compose run --rm test-runner pytest tests/flask
+  ```
+
+- Watch test output live (using ptw):  
+  ```bash
+  docker-compose run --rm test-runner ptw
+  ```
+
+### 🌐 Service Checks
+- Check Nginx via browser:  
+  Visit [http://localhost:8755](http://localhost:8755)
+
+- Test Signal API manually:  
+  ```bash
+  curl http://localhost:8756/v1/about
+  ```
