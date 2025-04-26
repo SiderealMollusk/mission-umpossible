@@ -162,3 +162,9 @@ cython_debug/
 #.idea/
 # Ignore node_modules in dev-tools
 dev-tools/node_modules/
+
+# Node.js modules
+**/node_modules/
+
+# Signal-cli runtime data
+/signal-cli-data/
