@@ -7,7 +7,6 @@ export function CharacterEdit() {
         <TextInput source="id" disabled />
         <TextInput source="name" />
         <TextInput source="species" />
-        <BooleanInput source="active" />
         <TextInput source="backstory" multiline fullWidth />
         <TextInput source="rp_notes" multiline fullWidth />
         <TextInput source="image_url" label="Image URL" fullWidth />

@@ -11,7 +11,6 @@ export function CharacterShow() {
         <TextField source="species" />
         <TextField source="backstory" />
         <TextField source="rp_notes" />
-        <BooleanField source="active" />
       </SimpleShowLayout>
     </Show>
   );
