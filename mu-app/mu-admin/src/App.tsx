@@ -3,6 +3,9 @@ import { Admin, Resource } from 'react-admin';
 import { supabaseDataProvider } from 'ra-supabase';
 import authProvider from './authProvider';
 import { createClient } from '@supabase/supabase-js';
+import { CharacterList } from './characters/CharacterList';
+import { CharacterShow } from './characters/CharacterShow';
+import { CharacterEdit } from './characters/CharacterEdit';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -21,7 +24,12 @@ function App() {
       dataProvider={dataProvider} 
       authProvider={authProvider}
     >
-      <Resource name="characters" />
+      <Resource
+        name="characters"
+        list={CharacterList}
+        show={CharacterShow}
+        edit={CharacterEdit}
+      />
     </Admin>
   );
 }
