@@ -14,8 +14,8 @@ const ActivityAssignmentPage = () => {
         <Typography variant="h5" gutterBottom>
           Activity Assignment
         </Typography>
-        <Grid2 container spacing={2} alignItems="stretch">
-          <Grid2 item xs={6}>
+        <Grid2 container component="div" spacing={2} alignItems="stretch">
+          <Grid2 component="div" xs={6}>
             <Box display="flex" flexDirection="column" height="100%">
               <RowSelector
                 resourceName="characters"
@@ -27,7 +27,7 @@ const ActivityAssignmentPage = () => {
               )}
             </Box>
           </Grid2>
-          <Grid2 item xs={6}>
+          <Grid2 component="div" xs={6}>
             <Box display="flex" flexDirection="column" height="100%">
               <RowSelector
                 resourceName="activities"
