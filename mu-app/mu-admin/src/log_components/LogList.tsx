@@ -16,7 +16,7 @@ export function LogList() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div style={{ padding: '1rem', borderBottom: '1px solid #ccc' }}>
-        <h3>Combined Log Viewer</h3>
+        <h3>Log Viewer</h3>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <input type="text" placeholder="Character ID" style={{ flex: 1 }} />
           <select style={{ flex: 1 }}>
