@@ -20,12 +20,14 @@ export function RowSelector({
   resourceName,
   mapOption,
   onSelect,
-  placeholder = 'Select an option',
+  placeholder,
 }: RowSelectorProps) {
   const notify = useNotify();
   const [options, setOptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<any>(null);
+
+  const effectivePlaceholder = placeholder || `Select ${resourceName}`;
 
   const fetchOptions = async () => {
     try {
@@ -58,14 +60,14 @@ export function RowSelector({
 
   return (
     <FormControl fullWidth>
-      <InputLabel>{placeholder}</InputLabel>
+      <InputLabel>{effectivePlaceholder}</InputLabel>
       <Select
         value={selected?.id || ''}
-        label={placeholder}
+        label={effectivePlaceholder}
         onOpen={handleOpen}
         onChange={handleChange}
         renderValue={() =>
-          selected ? mapOption(selected) : placeholder
+          selected ? mapOption(selected) : effectivePlaceholder
         }
       >
         {loading ? (
