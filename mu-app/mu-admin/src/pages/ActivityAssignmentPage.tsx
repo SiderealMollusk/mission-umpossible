@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Card, CardContent, Typography, Grid2, Box } from '@mui/material';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import { RowSelector } from '../components/RowSelector';
 import { CharacterDetailView } from '../characters/CharacterDetailView';
 import { ActivityDetailView } from '../activities/ActivityDetailView';
@@ -14,8 +15,8 @@ const ActivityAssignmentPage = () => {
         <Typography variant="h5" gutterBottom>
           Activity Assignment
         </Typography>
-        <Grid2 container component="div" spacing={2} alignItems="stretch">
-          <Grid2 component="div" xs={6}>
+        <Grid container spacing={2} alignItems="stretch">
+          <Grid item xs={6}>
             <Box display="flex" flexDirection="column" height="100%">
               <RowSelector
                 resourceName="characters"
@@ -26,8 +27,8 @@ const ActivityAssignmentPage = () => {
                 <CharacterDetailView record={selectedCharacter} />
               )}
             </Box>
-          </Grid2>
-          <Grid2 component="div" xs={6}>
+          </Grid>
+          <Grid item xs={6}>
             <Box display="flex" flexDirection="column" height="100%">
               <RowSelector
                 resourceName="activities"
@@ -38,8 +39,8 @@ const ActivityAssignmentPage = () => {
                 <ActivityDetailView record={selectedActivity} />
               )}
             </Box>
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
         <Typography variant="body1" sx={{ marginTop: 2 }}>
           This is a stub page for assigning activities to players or characters. More functionality coming soon.
         </Typography>
