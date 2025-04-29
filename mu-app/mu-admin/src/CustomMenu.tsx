@@ -33,6 +33,12 @@ const CustomMenu = () => {
         leftIcon={<span>📄</span>}
         selected={location.pathname === '/logs'}
       />
+      <MenuItemLink
+        to="/component-testing"
+        primaryText="Component Testing"
+        leftIcon={<span>🧪</span>}
+        selected={location.pathname === '/component-testing'}
+      />
     </Menu>
   );
 };

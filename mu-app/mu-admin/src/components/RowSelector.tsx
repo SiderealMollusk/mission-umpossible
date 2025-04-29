@@ -18,6 +18,7 @@ export interface RowSelectorProps {
   placeholder?: string;
   selectorIsHeader?: boolean;
   record?: any;
+  mode?: 'readonly' | 'selectable';
 }
 
 export function RowSelector({
@@ -27,6 +28,7 @@ export function RowSelector({
   placeholder,
   selectorIsHeader,
   record,
+  mode,
 }: RowSelectorProps) {
   const notify = useNotify();
   const [options, setOptions] = useState<any[]>([]);
@@ -64,8 +66,8 @@ export function RowSelector({
     onSelect(selectedRow);
   };
 
-  // If a fixed record is provided, render as read-only label with optional tooltip
-  if (record) {
+  // If mode is readonly and record is provided, render as read-only label with optional tooltip
+  if (mode === 'readonly' && record) {
     return (
       <Tooltip title={mapOption(record)}>
         <Typography
@@ -92,7 +94,7 @@ export function RowSelector({
     <FormControl fullWidth variant={selectorIsHeader ? "standard" : "outlined"}>
       {!selectorIsHeader && <InputLabel>{effectivePlaceholder}</InputLabel>}
       <Select
-        value={selected?.id || ''}
+        value={selected?.id || record?.id || ''}
         label={effectivePlaceholder}
         onOpen={handleOpen}
         onChange={handleChange}

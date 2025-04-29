@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { RowSelector } from '../components/RowSelector';
 import { CharacterDetailView } from '../characters/CharacterDetailView';
+import { ActivityDetailView } from '../activities/ActivityDetailView';
 
 const ActivityAssignmentPage = () => {
   const [selectedCharacter, setSelectedCharacter] = useState<any>(null);
@@ -17,13 +17,19 @@ const ActivityAssignmentPage = () => {
         <Grid container spacing={2} alignItems="stretch">
           <Grid item xs={6}>
             <Box display="flex" flexDirection="column" height="100%">
-              <RowSelector
-                resourceName="characters"
-                mapOption={(row: any) => row.name || row.id}
-                onSelect={(row: any) => setSelectedCharacter(row)}
+              <CharacterDetailView
+                record={selectedCharacter}
+                onSelect={(character: any) => setSelectedCharacter(character)}
               />
-              {selectedCharacter && (
-                <CharacterDetailView record={selectedCharacter} />
+            </Box>
+          </Grid>
+          <Grid item xs={6}>
+            <Box display="flex" flexDirection="column" height="100%">
+              {selectedActivity && (
+                <ActivityDetailView
+                  record={selectedActivity}
+                  onSelect={(activity: any) => setSelectedActivity(activity)}
+                />
               )}
             </Box>
           </Grid>

@@ -8,6 +8,7 @@ import { CharacterEdit } from './characters/CharacterEdit';
 import { LogList } from './log_components/LogList';
 import { Layout } from './Layout'; // Important: Layout must wire the CustomMenu inside it
 import ActivityAssignmentPage from './pages/ActivityAssignmentPage';
+import ComponentTestingPage from './pages/ComponentTesting';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
       />
       <CustomRoutes>
         <Route path="/activity-assignment" element={<ActivityAssignmentPage />} />
+        <Route path="/component-testing" element={<ComponentTestingPage />} />
       </CustomRoutes>
     </Admin>
   );
