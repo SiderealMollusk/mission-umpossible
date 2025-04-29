@@ -3,7 +3,6 @@ import { Card, CardContent, Typography, Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { RowSelector } from '../components/RowSelector';
 import { CharacterDetailView } from '../characters/CharacterDetailView';
-import { ActivityDetailView } from '../activities/ActivityDetailView';
 
 const ActivityAssignmentPage = () => {
   const [selectedCharacter, setSelectedCharacter] = useState<any>(null);
@@ -25,18 +24,6 @@ const ActivityAssignmentPage = () => {
               />
               {selectedCharacter && (
                 <CharacterDetailView record={selectedCharacter} />
-              )}
-            </Box>
-          </Grid>
-          <Grid item xs={6}>
-            <Box display="flex" flexDirection="column" height="100%">
-              <RowSelector
-                resourceName="activities"
-                mapOption={(row: any) => row.name || row.id}
-                onSelect={(row: any) => setSelectedActivity(row)}
-              />
-              {selectedActivity && (
-                <ActivityDetailView record={selectedActivity} />
               )}
             </Box>
           </Grid>

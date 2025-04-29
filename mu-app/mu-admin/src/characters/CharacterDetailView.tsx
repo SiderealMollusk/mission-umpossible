@@ -1,5 +1,6 @@
 import { Typography, Box, Divider } from '@mui/material';
 import { RowDetailView } from '../components/RowDetailView';
+import { RowSelector } from '../components/RowSelector';
 
 interface Character {
   id: string;
@@ -21,6 +22,15 @@ export function CharacterDetailView({ record }: CharacterDetailViewProps) {
       tooltipFromRecord={(r) =>
         `ID: ${r.id}\nCreated: ${new Date(r.created_at || '').toLocaleString()}`
       }
+      selector={
+        <RowSelector
+          resourceName="characters"
+          mapOption={(row: Character) => row.name || row.id}
+          selectorIsHeader
+          onSelect={() => {}}
+        />
+      }
+      selectorIsHeader={true}
     >
       <Box sx={{ mt: 2 }}>
         <Typography variant="subtitle1">Species:</Typography>

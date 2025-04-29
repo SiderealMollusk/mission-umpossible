@@ -3,9 +3,10 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 interface ActivityDetailViewProps {
   record: any;
+  selector?: React.ReactNode;
 }
 
-export function ActivityDetailView({ record }: ActivityDetailViewProps) {
+export function ActivityDetailView({ record, selector }: ActivityDetailViewProps) {
   if (!record) {
     return (
       <Card sx={{ minHeight: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -21,7 +22,8 @@ export function ActivityDetailView({ record }: ActivityDetailViewProps) {
   return (
     <Card sx={{ minHeight: 300 }}>
       <CardContent>
-        <Box display="flex" alignItems="center" justifyContent="space-between">
+        {selector}
+        <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ mt: 2 }}>
           <Typography variant="h6">{record.name || record.id}</Typography>
           <Tooltip title={`ID: ${record.id}\nCreated: ${record.created_at || 'Unknown'}`}>
             <InfoOutlinedIcon fontSize="small" color="action" sx={{ ml: 1 }} />

@@ -5,6 +5,8 @@ import {
   FormControl,
   InputLabel,
   CircularProgress,
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import { useNotify } from 'react-admin';
 import { supabase } from '../supabase';
@@ -14,6 +16,8 @@ export interface RowSelectorProps {
   mapOption: (row: any) => string;
   onSelect: (row: any) => void;
   placeholder?: string;
+  selectorIsHeader?: boolean;
+  record?: any;
 }
 
 export function RowSelector({
@@ -21,6 +25,8 @@ export function RowSelector({
   mapOption,
   onSelect,
   placeholder,
+  selectorIsHeader,
+  record,
 }: RowSelectorProps) {
   const notify = useNotify();
   const [options, setOptions] = useState<any[]>([]);
@@ -58,17 +64,43 @@ export function RowSelector({
     onSelect(selectedRow);
   };
 
+  // If a fixed record is provided, render as read-only label with optional tooltip
+  if (record) {
+    return (
+      <Tooltip title={mapOption(record)}>
+        <Typography
+          variant={selectorIsHeader ? 'body2' : 'body1'}
+          sx={{
+            backgroundColor: selectorIsHeader ? 'transparent' : 'background.paper',
+            fontSize: selectorIsHeader ? '0.875rem' : 'inherit',
+            height: selectorIsHeader ? 36 : 'auto',
+            padding: selectorIsHeader ? '6px 8px' : 'inherit',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            cursor: 'default',
+          }}
+        >
+          {mapOption(record)}
+        </Typography>
+      </Tooltip>
+    );
+  }
+
+  // Otherwise, render the interactive selector dropdown
   return (
-    <FormControl fullWidth>
-      <InputLabel>{effectivePlaceholder}</InputLabel>
+    <FormControl fullWidth variant={selectorIsHeader ? "standard" : "outlined"}>
+      {!selectorIsHeader && <InputLabel>{effectivePlaceholder}</InputLabel>}
       <Select
         value={selected?.id || ''}
         label={effectivePlaceholder}
         onOpen={handleOpen}
         onChange={handleChange}
+        size={selectorIsHeader ? "small" : "medium"}
         renderValue={() =>
           selected ? mapOption(selected) : effectivePlaceholder
         }
+        sx={selectorIsHeader ? { backgroundColor: 'transparent', fontSize: '0.875rem', height: 36 } : {}}
       >
         {loading ? (
           <MenuItem disabled>
