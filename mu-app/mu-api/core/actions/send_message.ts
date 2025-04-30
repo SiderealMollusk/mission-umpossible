@@ -1,8 +1,9 @@
+import { sendViaSignal } from './send_message_signal';
 import { ActionFn } from './types';
 
 
 export const send_message: ActionFn = async (arg, ctx) => {
-    const recipient = arg.to ?? ctx.character_id;
+    const recipient = arg.to ?? ctx.transports?.signal ?? ctx.character_id;
     const { channels } = arg;
   
     if ('literal' in arg) {
@@ -11,7 +12,12 @@ export const send_message: ActionFn = async (arg, ctx) => {
         channels,
         message: arg.literal,
       });
-      // TODO: actually send literal
+      if (channels.includes('signal')) {
+        await sendViaSignal({
+          to: recipient,
+          message: arg.literal,
+        });
+      }
     } else if ('prompt' in arg) {
       console.log('[send_message] Generating from prompt:', {
         to: recipient,

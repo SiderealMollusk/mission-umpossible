@@ -37,6 +37,21 @@ export async function startActivityForCharacter(
 
     const spec = result.rows[0].spec as ActivitySpec;
 
+    // Query for signal transport address for the character's player
+    const transportResult = await client.query(
+      `
+      SELECT pt.address
+      FROM character_assignments ca
+      JOIN player_transports pt ON pt.player_id = ca.player_id
+      WHERE ca.character_id = $1 AND pt.transport = 'signal'
+      LIMIT 1
+      `,
+      [character_id]
+    );
+
+    const signalAddress =
+      (transportResult.rowCount ?? 0) > 0 ? transportResult.rows[0].address : undefined;
+
     if (
       spec.on_start === undefined ||
       !Array.isArray(spec.on_start) ||
@@ -49,6 +64,9 @@ export async function startActivityForCharacter(
     const ctx: ActionContext = {
       activity_id,
       character_id,
+      transports: {
+        signal: signalAddress,
+      },
     };
 
     for (const trigger of spec.on_start ?? []) {

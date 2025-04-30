@@ -2,6 +2,8 @@ FROM node:20-slim
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y procps
+
 RUN npm install -g concurrently nodemon ts-node typescript
 
 # -- Frontend: install first for Docker caching --

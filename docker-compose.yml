@@ -66,6 +66,7 @@ services:
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true  # needed for Vite polling in Docker
+      - SIGNAL_NUMBER=+15107302276
     depends_on:
       - signal-api
     restart: always
