@@ -1,25 +1,22 @@
-# Use a slim Node.js base image for reduced vulnerabilities
 FROM node:20-slim
 
-# Set working directory
 WORKDIR /app
 
-# Install global development tools
 RUN npm install -g concurrently nodemon ts-node typescript
 
-# Copy application files
+# -- Frontend: install first for Docker caching --
+WORKDIR /app/mu-admin
+COPY mu-admin/package*.json ./
+RUN npm install
+
+# -- Backend: install next --
+WORKDIR /app/mu-api
+COPY mu-api/package*.json ./
+RUN npm install
+
+# -- Now copy all project files (after install) --
+WORKDIR /app
 COPY . .
 
-# Install frontend dependencies
-WORKDIR /app/mu-admin
-RUN npm install
-
-# Install backend dependencies
-WORKDIR /app/mu-api
-RUN npm install
-
-# Return to root directory
-WORKDIR /app
-
-# Start both frontend and backend concurrently
+# -- Run both servers --
 CMD ["concurrently", "npm --prefix mu-api run dev", "npm --prefix mu-admin run dev"]
