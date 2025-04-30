@@ -1,0 +1,59 @@
+activities.id :: uuid
+activities.name :: text
+activities.description :: text
+activities.spec :: jsonb
+activities.created_at :: timestamp with time zone
+activity_states.id :: uuid
+activity_states.character_id :: uuid
+activity_states.activity_id :: uuid
+activity_states.payload :: jsonb
+activity_states.created_at :: timestamp with time zone
+character_assignments.id :: uuid
+character_assignments.character_id :: uuid
+character_assignments.player_id :: uuid
+character_assignments.assignment_type :: text
+character_assignments.created_at :: timestamp with time zone
+characters.name :: text
+characters.species :: text
+characters.backstory :: text
+characters.rp_notes :: text
+characters.owner_id :: uuid
+characters.created_at :: timestamp with time zone
+characters.id :: uuid
+characters.creator_id :: uuid
+characters.control_mode :: text
+characters_onboardable.character_id :: uuid
+characters_onboardable.name :: text
+characters_onboardable.player_name :: text
+characters_onboardable.transports :: ARRAY
+control_modes.id :: text
+enriched_logs.id :: uuid
+enriched_logs.created_at :: timestamp with time zone
+enriched_logs.event_type_id :: integer
+enriched_logs.payload :: jsonb
+enriched_logs.event_type_name :: text
+log_event_types.id :: integer
+log_event_types.name :: text
+log_event_types.description :: text
+logs.id :: uuid
+logs.created_at :: timestamp with time zone
+logs.event_type_id :: integer
+logs.payload :: jsonb
+messages.id :: uuid
+messages.sender_id :: uuid
+messages.receiver_id :: uuid
+messages.content :: text
+messages.timestamp :: timestamp with time zone
+messages.metadata :: jsonb
+player_transports.id :: uuid
+player_transports.created_at :: timestamp with time zone
+player_transports.player_id :: uuid
+player_transports.transport :: USER-DEFINED
+player_transports.address :: text
+player_transports.validated :: boolean
+player_transports.notes :: text
+players.id :: uuid
+players.created_at :: timestamp with time zone
+players.display_name :: text
+players.notes :: text
+players.auth_user_id :: uuid
