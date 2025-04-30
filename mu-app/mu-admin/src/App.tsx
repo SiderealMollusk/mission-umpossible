@@ -9,6 +9,7 @@ import { LogList } from './log_components/LogList';
 import { Layout } from './Layout'; // Important: Layout must wire the CustomMenu inside it
 import ActivityAssignmentPage from './pages/ActivityAssignment';
 import ComponentTestingPage from './pages/ComponentTesting';
+import OnBoarding from './pages/OnBoarding';
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
       <CustomRoutes>
         <Route path="/activity-assignment" element={<ActivityAssignmentPage />} />
         <Route path="/component-testing" element={<ComponentTestingPage />} />
+        <Route path="/onboarding" element={<OnBoarding/>} />
       </CustomRoutes>
     </Admin>
   );

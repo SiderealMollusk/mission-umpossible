@@ -1,64 +1,107 @@
-import { useState } from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import { CharacterDetailView } from '../characters/CharacterDetailView';
-import { ActivityDetailView } from '../activities/ActivityDetailView';
+import { useState } from "react";
+import { Card, CardContent, Typography, Box, Divider, Button } from "@mui/material";
+import { CharacterDetailView } from "../characters/CharacterDetailView";
 
 const ActivityAssignmentPage = () => {
+  const [steps, setSteps] = useState([false, false, false, false]);
   const [selectedCharacter, setSelectedCharacter] = useState<any>(null);
-  const [selectedActivity, setSelectedActivity] = useState<any>(null);
+
+  const handleToggle = (index: number) => {
+    const newSteps = [...steps];
+    newSteps[index] = !newSteps[index];
+    // Invalidate all subsequent steps if the current is being uncompleted
+    for (let i = index + 1; i < newSteps.length; i++) {
+      newSteps[i] = false;
+    }
+    setSteps(newSteps);
+  };
 
   return (
     <Card>
       <CardContent>
-        <Typography variant="h5" gutterBottom>
-          Activity Assignment
-        </Typography>
-        <Box sx={{ my: 4 }}>
-          <hr />
-          <Typography variant="h6" gutterBottom>
-            Step 1: Select Character and Activity
-          </Typography>
-        </Box>
-        <Grid container spacing={2} alignItems="stretch">
-          <Grid item xs={6}>
-            <Box display="flex" flexDirection="column" height="100%">
+        <Step
+          number={1}
+          label="Select a character"
+          ready={true}
+          complete={!!selectedCharacter}
+          toggleComplete={() => {}}
+          contentReady={
+            <div>
+              aaaaaaa
               <CharacterDetailView
-                record={selectedCharacter ?? {}}
-                onSelect={(character: any) => setSelectedCharacter(character)}
+              record={selectedCharacter}
+              onSelect={setSelectedCharacter}
               />
-            </Box>
-          </Grid>
-          <Grid item xs={6}>
-            <Box display="flex" flexDirection="column" height="100%">
-              <ActivityDetailView
-                record={selectedActivity ?? {}}
-                onSelect={(activity: any) => setSelectedActivity(activity)}
-              />
-            </Box>
-          </Grid>
-        </Grid>
-        <Box sx={{ my: 4 }}>
-          <hr />
-          <Typography variant="h6" gutterBottom>
-            Step 2: Review Current State
-          </Typography>
+              bbbbbb
+            </div>
+          }
+        />
+        <Divider sx={{ my: 3 }} />
 
-          {!selectedCharacter ? (
-            <Typography variant="body1" sx={{ mt: 2 }}>
-              Select a character to view their current activity.
-            </Typography>
-          ) : (
-            <Typography variant="h6" sx={{ mt: 2 }}>
-              Step 2: {selectedCharacter.name}'s Activity
-            </Typography>
-          )}
-        </Box>
-        <Typography variant="body1" sx={{ marginTop: 2 }}>
-          This is a stub page for assigning activities to players or characters. More functionality coming soon.
-        </Typography>
+        <Step
+          number={2}
+          label="Step 2"
+          ready={steps[0]}
+          complete={steps[1]}
+          toggleComplete={() => handleToggle(1)}
+        />
+        <Divider sx={{ my: 3 }} />
+
+        <Step
+          number={3}
+          label="Step 3"
+          ready={steps[1]}
+          complete={steps[2]}
+          toggleComplete={() => handleToggle(2)}
+        />
+        <Divider sx={{ my: 3 }} />
+
+        <Step
+          number={4}
+          label="Step 4"
+          ready={steps[2]}
+          complete={steps[3]}
+          toggleComplete={() => handleToggle(3)}
+        />
       </CardContent>
     </Card>
+  );
+};
+
+interface StepProps {
+  number: number;
+  label: string;
+  ready: boolean;
+  complete: boolean;
+  toggleComplete: () => void;
+  contentReady?: React.ReactNode;
+  contentWaiting?: React.ReactNode;
+}
+
+const Step = ({ label, ready, complete, toggleComplete, contentReady, contentWaiting }: StepProps) => {
+  return (
+    <Box>
+      <Typography variant="h6">{label}</Typography>
+      <Typography color="text.secondary">
+        {ready ? "Ready" : "Waiting on previous step..."}
+      </Typography>
+      <Box mt={1}>
+        {ready ? (
+          <>
+            {contentReady}
+            <Button
+              variant={complete ? "contained" : "outlined"}
+              color={complete ? "success" : "primary"}
+              onClick={toggleComplete}
+            >
+              {complete ? "Complete" : "Mark as Complete"}
+            </Button>
+          </>
+        ) : (
+          contentWaiting
+        )}
+      </Box>
+    </Box>
   );
 };
 

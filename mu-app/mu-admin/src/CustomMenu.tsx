@@ -12,6 +12,12 @@ const CustomMenu = () => {
         Processes
       </Typography>
       <MenuItemLink
+        to="/onboarding"
+        primaryText="Onboarding"
+        leftIcon={<span>🚀</span>}
+        selected={location.pathname === '/onboarding'}
+      />
+      <MenuItemLink
         to="/activity-assignment"
         primaryText="Activity Assignment"
         leftIcon={<span>🧩</span>}

@@ -15,7 +15,6 @@ interface CharacterDetailViewProps {
 }
 
 export function CharacterDetailView({ record, onSelect }: CharacterDetailViewProps) {
-  if (!record) return null;
   return (
     <RowDetailView
       record={record}
@@ -27,17 +26,19 @@ export function CharacterDetailView({ record, onSelect }: CharacterDetailViewPro
       onSelect={onSelect}
       selectorIsHeader={true}
     >
-      <Box sx={{ mt: 2 }}>
-        <Typography variant="subtitle1">Species:</Typography>
-        <Typography>{record.species || 'Unknown'}</Typography>
+      {record && (
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="subtitle1">Species:</Typography>
+          <Typography>{record.species || 'Unknown'}</Typography>
 
-        <Divider sx={{ my: 2 }} />
+          <Divider sx={{ my: 2 }} />
 
-        <Typography variant="subtitle1">Backstory:</Typography>
-        <Typography whiteSpace="pre-line">
-          {record.backstory || 'No backstory provided.'}
-        </Typography>
-      </Box>
+          <Typography variant="subtitle1">Backstory:</Typography>
+          <Typography whiteSpace="pre-line">
+            {record.backstory || 'No backstory provided.'}
+          </Typography>
+        </Box>
+      )}
     </RowDetailView>
   );
 }
