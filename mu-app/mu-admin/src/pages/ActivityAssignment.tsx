@@ -18,19 +18,17 @@ const ActivityAssignmentPage = () => {
           <Grid item xs={6}>
             <Box display="flex" flexDirection="column" height="100%">
               <CharacterDetailView
-                record={selectedCharacter}
+                record={selectedCharacter ?? {}}
                 onSelect={(character: any) => setSelectedCharacter(character)}
               />
             </Box>
           </Grid>
           <Grid item xs={6}>
             <Box display="flex" flexDirection="column" height="100%">
-              {selectedActivity && (
-                <ActivityDetailView
-                  record={selectedActivity}
-                  onSelect={(activity: any) => setSelectedActivity(activity)}
-                />
-              )}
+              <ActivityDetailView
+                record={selectedActivity ?? {}}
+                onSelect={(activity: any) => setSelectedActivity(activity)}
+              />
             </Box>
           </Grid>
         </Grid>
