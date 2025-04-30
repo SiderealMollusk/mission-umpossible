@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { getDbClient } from '../db';
 import { ActivitySpec } from 'shared/activity-spec';
+import { startActivityForCharacter } from '../core/activities';
 
 const router = Router();
 
@@ -30,21 +31,14 @@ router.post('/', async (req, res) => {
 
     const activityId = configResult.rows[0].value;
 
-    const activityResult = await client.query(
-      `SELECT spec FROM activities WHERE id = $1 LIMIT 1`,
-      [activityId]
-    );
-
-    if (activityResult.rowCount === 0) {
-      return res.status(404).json({ error: 'Activity not found' });
+    for (const character_id of character_ids) {
+      console.debug(`Onboarding character ${character_id} with activity ${activityId}`);
+      await startActivityForCharacter(activityId, character_id);
     }
 
-    const spec = activityResult.rows[0].spec as ActivitySpec;
-    console.log("Onboarding activity spec:", spec);
-
-    res.json({ success: true, activity_spec: spec });
+    res.json({ success: true });
   } catch (err) {
-    console.error("Error during onboarding lookup:", err);
+    console.error("Error during onboarding:", err);
     res.status(500).json({ error: 'Internal server error' });
   } finally {
     await client.end();
