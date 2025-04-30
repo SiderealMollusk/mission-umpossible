@@ -66,7 +66,26 @@ const OnBoarding = () => {
           color="primary"
           disabled={selectedCharacterIds.length === 0}
           sx={{ mt: 2 }}
-          onClick={() => console.log("Onboarding:", selectedCharacterIds)}
+          onClick={async () => {
+            try {
+              const response = await fetch('http://localhost:5176/api/v1/onboard', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ character_ids: selectedCharacterIds }),
+              });
+
+              if (!response.ok) {
+                throw new Error(`Failed to onboard: ${response.statusText}`);
+              }
+
+              const result = await response.json();
+              console.log("Onboard success:", result);
+            } catch (err) {
+              console.error("Onboard failed:", err);
+            }
+          }}
         >
           On Board
         </Button>
