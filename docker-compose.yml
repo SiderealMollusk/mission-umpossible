@@ -51,17 +51,21 @@ services:
     environment:
       - CF_TOKEN
 
-  # mu-dash: React Admin Dashboard
-  mu-dash:
+  # mu-app: unified backend + admin dev server
+  # Assumes Dockerfile exists at ./mu-app/Dockerfile
+  # Must expose the ports for both frontend and API internally
+  mu-app:
     build:
-      context: ./mu-dash  # Pointing to the directory where Dockerfile for React app is located
+      context: ./mu-app
       dockerfile: Dockerfile
-    
     ports:
-      - "3000:3000"
-    environment:
-      - REACT_APP_RUNTIME_ENV=docker
-      - CHOKIDAR_USEPOLLING=true
+      - "5176:5176"  # backend API (adjust if different)
+      - "5173:5173"  # frontend dev (adjust if different)
     volumes:
-      - ./mu-dash:/app
+      - ./mu-app:/app  # enables live editing
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true  # needed for Vite polling in Docker
+    depends_on:
+      - signal-api
     restart: always
