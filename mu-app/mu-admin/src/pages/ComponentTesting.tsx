@@ -1,33 +1,27 @@
 import { useState } from 'react';
 import { Card, CardContent, Typography, Box, Divider } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import { CharacterDetailView } from '../characters/CharacterDetailView';
+import { ActivityDetailView } from '../activities/ActivityDetailView';
 
-const mockCharacters = [
-  {
-    id: 'char-001',
+const ComponentTestingPage = () => {
+  const [selectedCharacter, setSelectedCharacter] = useState<any>(null);
+  const [selectedActivity, setSelectedActivity] = useState<any>(null);
+
+  const mockCharacter = {
+    id: 'char_001',
     name: 'Test Character',
-    species: 'Synthetic',
-    backstory: 'Created as a test subject for UI evaluation.',
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 'char-002',
-    name: 'Backup Clone',
     species: 'Human',
-    backstory: '',
+    backstory: 'Once upon a time...',
     created_at: new Date().toISOString(),
-  },
-  {
-    id: 'char-003',
-    name: 'Nullface',
-    species: '',
-    backstory: '',
-    created_at: new Date().toISOString(),
-  },
-];
+  };
 
-const ComponentTesting = () => {
-  const [selectedCharacter, setSelectedCharacter] = useState<any>(mockCharacters[0]);
+  const mockActivity = {
+    id: 'act_001',
+    name: 'Test Activity',
+    description: 'This is a test activity',
+    created_at: new Date().toISOString(),
+  };
 
   return (
     <Card>
@@ -35,45 +29,34 @@ const ComponentTesting = () => {
         <Typography variant="h5" gutterBottom>
           Component Testing
         </Typography>
-        <Typography variant="body1" sx={{ marginBottom: 2 }}>
-          This page is used to test and develop components in isolation.
-        </Typography>
-        <Divider sx={{ my: 2 }} />
-        <Typography variant="subtitle1" gutterBottom>
-          Character Detail View - Basic
-        </Typography>
-        <Box sx={{ mb: 4 }}>
-          <CharacterDetailView
-            record={selectedCharacter}
-            onSelect={(c: any) => setSelectedCharacter(c)}
-          />
-        </Box>
 
         <Divider sx={{ my: 2 }} />
-        <Typography variant="subtitle1" gutterBottom>
-          Character Detail View - No Species or Backstory
-        </Typography>
-        <Box sx={{ mb: 4 }}>
-          <CharacterDetailView
-            record={{ ...mockCharacters[0], species: '', backstory: '' }}
-            onSelect={(c: any) => setSelectedCharacter(c)}
-          />
-        </Box>
 
-        <Divider sx={{ my: 2 }} />
-        <Typography variant="subtitle1" gutterBottom>
-          Character Detail View - Selector Enabled
-        </Typography>
-        <Box sx={{ mb: 4 }}>
-          <CharacterDetailView
-            record={selectedCharacter}
-            onSelect={(c: any) => setSelectedCharacter(c)}
-            selectorIsHeader={true}
-          />
-        </Box>
+        <Grid container spacing={2} alignItems="stretch">
+          <Grid item xs={6}>
+            <CharacterDetailView record={mockCharacter} onSelect={() => {}} />
+          </Grid>
+          <Grid item xs={6}>
+            <CharacterDetailView
+              record={selectedCharacter}
+              onSelect={setSelectedCharacter}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <ActivityDetailView record={mockActivity} onSelect={() => {}} />
+          </Grid>
+          <Grid item xs={6}>
+            <ActivityDetailView
+              record={selectedActivity}
+              onSelect={setSelectedActivity}
+            />
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ my: 4 }} />
       </CardContent>
     </Card>
   );
 };
 
-export default ComponentTesting;
+export default ComponentTestingPage;

@@ -1,3 +1,13 @@
+/**
+ * ActivityDetailView
+ *
+ * Usage:
+ * - This is a wrapper around RowDetailView specialized for Activity records.
+ * - Use `record` to pass the selected activity object.
+ * - If selectorIsHeader is true, dropdown selection is shown.
+ * - Provide `onSelect` for changing the selected activity if interactive.
+ */
+
 import { Typography, Box, Divider } from '@mui/material';
 import { RowDetailView } from '../components/RowDetailView';
 
@@ -14,6 +24,8 @@ interface ActivityDetailViewProps {
 }
 
 export function ActivityDetailView({ record, onSelect }: ActivityDetailViewProps) {
+  if (!record) return null;
+
   return (
     <RowDetailView
       record={record}
@@ -34,3 +46,5 @@ export function ActivityDetailView({ record, onSelect }: ActivityDetailViewProps
     </RowDetailView>
   );
 }
+
+export default ActivityDetailView;
