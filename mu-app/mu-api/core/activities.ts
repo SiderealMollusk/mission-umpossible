@@ -8,7 +8,12 @@ import { log_event } from '../core/actions/log_event';
 async function executeTrigger(trigger: ActivityTrigger, ctx: ActionContext): Promise<void> {
   switch (trigger.fn) {
     case 'send_message':
-      return send_message(trigger.arg, ctx);
+      // Ensure we send to the actual transport address, not the character ID
+      const sendArg = { ...trigger.arg };
+      if (ctx.transports.signal && Array.isArray(sendArg.channels) && sendArg.channels.includes('signal')) {
+        sendArg.to = ctx.transports.signal;
+      }
+      return send_message(sendArg, ctx);
 
     case 'log_event':
       return log_event(trigger.arg, ctx);
