@@ -4,21 +4,24 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y procps
 
-RUN npm install -g concurrently nodemon ts-node typescript
+# Install global dev tools (optional)
+RUN npm install -g concurrently
 
-# -- Frontend: install first for Docker caching --
+# Frontend install
 WORKDIR /app/mu-admin
 COPY mu-admin/package*.json ./
 RUN npm install
 
-# -- Backend: install next --
+# Backend install
 WORKDIR /app/mu-api
 COPY mu-api/package*.json ./
 RUN npm install
 
-# -- Now copy all project files (after install) --
+# Copy everything else
 WORKDIR /app
 COPY . .
 
-# -- Run both servers --
-CMD ["concurrently", "npm --prefix mu-api run dev", "npm --prefix mu-admin run dev"]
+# Start servers correctly
+CMD concurrently \
+  "npm --prefix mu-api run dev" \
+  "npm --prefix mu-admin run dev"

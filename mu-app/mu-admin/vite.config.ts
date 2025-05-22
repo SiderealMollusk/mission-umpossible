@@ -7,6 +7,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [react()],
   server: {
     host: "0.0.0.0",
+    allowedHosts: ["mu-admin.virgil.info"],
   },
   build: {
     sourcemap: mode === "development",
