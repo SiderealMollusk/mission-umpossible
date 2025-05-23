@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { getDbClient } from '../db';
-import { ActivitySpec } from 'shared/activity-spec';
 import { startActivityForCharacter } from '../core/activities';
 
 const router = Router();

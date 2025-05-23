@@ -1,5 +1,5 @@
 import { getDbClient } from '../db';
-import { ActivitySpec, ActivityTrigger } from 'shared/activity-spec';
+import { ActivitySpec, ActivityTrigger } from '../../shared/models/Activity_Spec';
 import { ActionContext, ActionFn } from '../core/actions/types';
 import { actionHandlers } from '../core/actions';
 import { send_message } from '../core/actions/send_message';

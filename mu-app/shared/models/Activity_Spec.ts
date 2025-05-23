@@ -1,4 +1,4 @@
-import type { SendMessageArg } from "../mu-api/core/actions/types";
+import type { SendMessageArg } from "../../mu-api/core/actions/types";
 
 export type ActivityTrigger =
   | {

@@ -1,8 +1,7 @@
 import { Router } from 'express';
 import onboard from './onboard';
 import seedPlayer from './seedPlayer';
-import handleIncomingMessages from './handleIncomingMessages';
-import { userInfo } from 'os';
+import receiveSignalMessage from './receiveSignalMessage';
 
 // import other route modules as you add them
 
@@ -14,5 +13,7 @@ router.use('/onboard', onboard);
 // router.use('/players', players);
 router.use('/players/seed', seedPlayer);
 
-router.use('/internal/handleIncomingMessages', handleIncomingMessages);
+// Webhook endpoint for incoming Signal messages
+router.use('/webhooks/signal', receiveSignalMessage);
+
 export default router;

@@ -29,6 +29,11 @@ async function pollLoop() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(messages)
         });
+        // Acknowledge & remove all processed messages from the signal-cli queue
+        await fetch(`${SIGNAL_API}/v1/receive/${SIGNAL_NUMBER}`, {
+          method: 'DELETE'
+        });
+        console.log(`cleared ${messages.length} messages from signal-cli queue`);
       } else {
         console.log('polled');
       }

@@ -37,7 +37,7 @@ services:
     environment:
       SIGNAL_NUMBER: "+15107302276"
       SIGNAL_API: "http://signal-api:8080"
-      MU_API_URL: "http://mu-app:5176/api/v1/internal/handleIncomingMessages"
+      MU_API_URL: "http://mu-app:5176/api/v1/webhooks/signal"
       DELAY_RANGE: "3,12"
     depends_on:
       - signal-api
