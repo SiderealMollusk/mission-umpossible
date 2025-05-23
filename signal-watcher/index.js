@@ -12,7 +12,7 @@ process.on('SIGTERM', () => { console.log('exiting'); shouldStop = true; });
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
 async function receiveMessages() {
-  const res = await fetch(`${SIGNAL_API}/v1/receive/${SIGNAL_NUMBER}`);
+  const res = await fetch(`${SIGNAL_API}/v1/receive/${SIGNAL_NUMBER}?delete=true`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
@@ -29,11 +29,22 @@ async function pollLoop() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(messages)
         });
-        // Acknowledge & remove all processed messages from the signal-cli queue
-        await fetch(`${SIGNAL_API}/v1/receive/${SIGNAL_NUMBER}`, {
-          method: 'DELETE'
-        });
-        console.log(`cleared ${messages.length} messages from signal-cli queue`);
+        // clear any typingIndicator on sender side
+        for (const env of messages) {
+          const typing = env.envelope?.typingMessage?.action;
+          if (typing) {
+            const indicatorUrl = `${SIGNAL_API}/v1/typing-indicator/${SIGNAL_NUMBER}`;
+            const method = typing === 'STARTED' ? 'PUT' : 'DELETE';
+            try {
+              await fetch(indicatorUrl, { method });
+              console.log(`cleared typingIndicator (${typing}) via ${method} ${indicatorUrl}`);
+            } catch (err) {
+              console.error('typing-indicator clear error:', err.message);
+            }
+          }
+        }
+        await receiveMessages();
+        console.log('flushed leftover events');
       } else {
         console.log('polled');
       }
