@@ -1,4 +1,4 @@
-import { sendViaSignal } from './actions/send_message_signal';
+import { sendViaSignal } from './senderSignal';
 //import { sendViaDiscord } from './actions/send_message_discord'; // assume this will exist
 import { OutgoingTrigger } from '../../shared/types';
 

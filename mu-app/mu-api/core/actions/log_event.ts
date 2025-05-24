@@ -1,10 +1,8 @@
-import { ActionFn } from './types';
+import type { ActionFn } from '../../../shared/types';
 
-export const log_event: ActionFn = async (arg, ctx) => {
+export const log_event: ActionFn<string> = async (arg, ctx) => {
   console.log('[log_event] Logging event:', {
     event: arg,
     context: ctx,
   });
-
-  // TODO: Write event to persistent store (logs or enriched_logs)
 };

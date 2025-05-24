@@ -1,9 +1,7 @@
-import type { SendMessageArg } from "../../mu-api/core/actions/types";
-
 export type ActivityTrigger =
   | {
       fn: "send_message";
-      arg: SendMessageArg;
+      arg: string;
     }
   | {
       fn: "log_event";

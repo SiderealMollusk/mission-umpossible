@@ -1,7 +1,17 @@
 import { Player } from './models/Player';
 import { Character } from './models/Character';
-import { ActivityState } from './models/ActivityState';
 import { Activity } from './models/Activity';
+import { ActivityState } from './models/ActivityState';
+
+/**
+ * Generic action function.
+ * @param arg The action-specific payload.
+ * @param ctx The full MessageContext for this message.
+ */
+export type ActionFn<Arg = any> = (
+  arg: Arg,
+  ctx: MessageContext
+) => Promise<OutgoingTrigger[] | void>;
 
 // Chat-turn support
 export type ChatRole = 'system' | 'user' | 'assistant';
