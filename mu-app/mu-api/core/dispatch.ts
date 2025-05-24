@@ -63,7 +63,16 @@ export async function dispatchIncoming(batch: IncomingMessage[]): Promise<void> 
 
       // 3. Lookup current activity state for character
       const stateRes = await client.query<ActivityState>(
-        `SELECT * FROM activity_states WHERE character_id = $1 ORDER BY created_at DESC LIMIT 1`,
+        `SELECT
+           id,
+           character_id AS "characterId",
+           activity_id  AS "activityId",
+           payload,
+           created_at   AS "createdAt"
+         FROM activity_states
+         WHERE character_id = $1
+         ORDER BY created_at DESC
+         LIMIT 1`,
         [character.id]
       );
       if ((stateRes.rowCount ?? 0) === 0) {
@@ -75,8 +84,15 @@ export async function dispatchIncoming(batch: IncomingMessage[]): Promise<void> 
       let activity: Activity | undefined;
       if (activityState?.activityId) {
         const activityRes = await client.query<Activity>(
-          `SELECT id, name, description, spec, created_at AS "createdAt"
-           FROM activities WHERE id = $1 LIMIT 1`,
+          `SELECT
+             id,
+             name,
+             description,
+             spec,
+             created_at AS "createdAt"
+           FROM activities
+           WHERE id = $1
+           LIMIT 1`,
           [activityState.activityId]
         );
         if ((activityRes.rowCount ?? 0) > 0) {
@@ -91,13 +107,15 @@ export async function dispatchIncoming(batch: IncomingMessage[]): Promise<void> 
       // 5. Fetch NPC character if activity and spec exist
       let npcCharacter: Character | undefined;
       if (activity?.spec?.contact_character) {
-        const npcId = activity.spec.contact_character;
+        const contactName = activity.spec.contact_character;
         const npcRes = await client.query<Character>(
-          `SELECT * FROM characters WHERE id = $1 LIMIT 1`,
-          [npcId]
+          `SELECT * FROM characters WHERE name = $1 LIMIT 1`,
+          [contactName]
         );
         if ((npcRes.rowCount ?? 0) > 0) {
           npcCharacter = npcRes.rows[0];
+        } else {
+          console.warn(`No NPC character found with name ${contactName}`);
         }
       }
 
@@ -105,8 +123,12 @@ export async function dispatchIncoming(batch: IncomingMessage[]): Promise<void> 
       const ctx: MessageContext = {
         player,
         character,
-        activityState,
-        activity,
+        activity: activity
+          ? {
+              definition: activity,
+              state: activityState,
+            }
+          : undefined,
         npcCharacter,
         channel,
         source,

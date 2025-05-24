@@ -1,8 +1,16 @@
-
 import { Player } from './models/Player';
 import { Character } from './models/Character';
 import { ActivityState } from './models/ActivityState';
 import { Activity } from './models/Activity';
+
+// Chat-turn support
+export type ChatRole = 'system' | 'user' | 'assistant';
+
+/** One turn in a conversation: user or assistant. */
+export interface ChatTurn {
+  role: ChatRole;
+  text: string;
+}
 
 
 // DTOs for message handling pipeline
@@ -47,14 +55,22 @@ export interface OutgoingTrigger {
 export interface MessageContext {
   player: Player;
   character: Character;
-  activityState?: ActivityState;
-  activity?: Activity;
+  /**
+   * Current activity context for this message.
+   */
+  activity?: {
+    /** The activity definition/spec from the database */
+    definition: Activity;
+    /** The persisted state for this character's activity */
+    state?: ActivityState;
+  };
   npcCharacter?: Character;
   channel: IncomingMessage['channel'];
   source: IncomingMessage['source'];
   text?: IncomingMessage['text'];
   typing?: IncomingMessage['typing'];
   attachments?: IncomingMessage['attachments'];
+  conversationHistory?: ChatTurn[];
   timestamp: IncomingMessage['timestamp'];
   raw: any;
 }

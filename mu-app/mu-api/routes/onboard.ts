@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { getDbClient } from '../db';
-import { startActivityForCharacter } from '../core/activities';
+import { dispatchIncoming } from '../core/dispatch';
+import type { IncomingMessage } from '../../shared/types';
 
 const router = Router();
 
@@ -32,7 +33,41 @@ router.post('/', async (req, res) => {
 
     for (const character_id of character_ids) {
       console.debug(`Onboarding character ${character_id} with activity ${activityId}`);
-      await startActivityForCharacter(activityId, character_id);
+
+      // 1) Create initial activity_state for this character
+      await client.query(
+        `INSERT INTO activity_states (character_id, activity_id)
+         VALUES ($1, $2)`,
+        [character_id, activityId]
+      );
+
+      // 2) Look up the player's Signal address
+      const transportRes = await client.query(
+        `
+        SELECT pt.address
+        FROM character_assignments ca
+        JOIN player_transports pt ON pt.player_id = ca.player_id
+        WHERE ca.character_id = $1
+          AND pt.transport = 'signal'
+        LIMIT 1
+        `,
+        [character_id]
+      );
+      const signalAddress = transportRes.rows[0]?.address;
+
+      // 3) Build a fake IncomingMessage to trigger onboarding via dispatch
+      const fakeMsg: IncomingMessage = {
+        channel: 'signal',
+        source: signalAddress,
+        text: '',                // no text; triggers on_start
+        typing: undefined,
+        attachments: undefined,
+        timestamp: Date.now(),  // epoch millis
+        raw: {},
+      };
+
+      // 4) Dispatch through the normal pipeline
+      await dispatchIncoming([fakeMsg]);
     }
 
     res.json({ success: true });

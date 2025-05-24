@@ -1,3 +1,4 @@
+import { json } from 'stream/consumers';
 import { MessageContext, OutgoingTrigger } from '../../shared/types';
 
 /**
@@ -14,9 +15,8 @@ export async function handleMessage(ctx: MessageContext): Promise<OutgoingTrigge
 
   // Non-typing messages: echo back
   const receivedText = ctx.text ?? '';
-  const reply = `You said '${receivedText}'. Back at ya`;
-  console.log(`↩️ Echoing back to ${ctx.source}: ${reply}`);
-
+  const reply = `check logs`;
+  console.log('Full MessageContext:', JSON.stringify(ctx, null, 2));
   return [
     {
       channel: ctx.channel,

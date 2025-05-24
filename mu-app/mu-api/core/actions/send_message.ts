@@ -1,3 +1,5 @@
+//cruft?  because of sender
+
 import { sendViaSignal } from './send_message_signal';
 import { ActionFn } from './types';
 
@@ -25,7 +27,6 @@ export const send_message: ActionFn = async (arg, ctx) => {
         prompt: arg.prompt,
         context: arg.context,
       });
-      // TODO: integrate LLM message generation
     } else {
       console.warn('[send_message] Invalid message arg shape:', arg);
     }
