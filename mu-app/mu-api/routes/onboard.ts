@@ -53,13 +53,12 @@ router.post('/', async (req, res) => {
         `,
         [character_id]
       );
-      const signalAddress = transportRes.rows[0]?.address;
 
       // 3) Build a fake IncomingMessage to trigger onboarding via dispatch
       const fakeMsg: IncomingMessage = {
         channel: 'signal',
-        source: signalAddress,
-        text: '',                // no text; triggers on_start
+        source: 'mock:routes/onboard.ts',
+        text: '',
         typing: undefined,
         attachments: undefined,
         timestamp: Date.now(),  // epoch millis

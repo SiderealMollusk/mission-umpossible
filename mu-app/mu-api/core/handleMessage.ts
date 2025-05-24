@@ -13,8 +13,10 @@ export async function handleMessage(ctx: MessageContext): Promise<OutgoingTrigge
     return [];
   }
 
-  // Non-typing messages: echo back
-  const receivedText = ctx.text ?? '';
+  // Non-typing messages:
+  
+
+  //is start? --> run on_start triggers IN ORDER
   const reply = `check logs`;
   console.log('Full MessageContext:', JSON.stringify(ctx, null, 2));
   return [
