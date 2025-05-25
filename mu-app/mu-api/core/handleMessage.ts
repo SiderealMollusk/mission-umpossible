@@ -1,20 +1,65 @@
-import { json } from 'stream/consumers';
 import { MessageContext, OutgoingTrigger } from '../../shared/types';
+import { getDbClient } from '../db';
+import { actionHandlers } from './actions';
 
 /**
  * Stub business logic handler: logs context and returns no triggers.
  */
 export async function handleMessage(ctx: MessageContext): Promise<OutgoingTrigger[]> {
-  const playerName = ctx.player.display_name;
-
-  // Typing events: log and drop
+  // Typing events: log and drop — handle first to avoid unnecessary DB work
   if (ctx.typing) {
-    console.log(`${playerName} ${ctx.typing} typing`);
+    console.log(`${ctx.player.display_name} ${ctx.typing} typing`);
     return [];
   }
 
-  // Non-typing messages:
-  
+  // If this is a fresh activity, run its on_start triggers
+  if (ctx.activity?.state && !ctx.activity.state.payload.initialized) {
+    const spec = ctx.activity.definition.spec;
+    const client = getDbClient();
+    await client.connect();
+    try {
+      const outgoing: OutgoingTrigger[] = [];
+      for (const trigger of spec.on_start ?? []) {
+        const handler = actionHandlers[trigger.fn];
+        if (!handler) {
+          console.warn(`No handler for trigger ${trigger.fn}`);
+          continue;
+        }
+        // Execute and collect any outgoing triggers
+        const results = await handler(trigger.arg as any, ctx);
+        if (Array.isArray(results)) {
+          outgoing.push(...results);
+        }
+      }
+      // Mark initialized so this block doesn't run again
+      await client.query(
+        `UPDATE activity_states
+           SET payload = payload || '{"initialized":true}'::jsonb
+         WHERE id = $1`,
+        [ctx.activity.state.id]
+      );
+      return outgoing;
+    } finally {
+      await client.end();
+    }
+  }
+
+  // If activity is already initialized, send a one-time acknowledgement
+  if (ctx.activity?.state && ctx.activity.state.payload.initialized) {
+    const reply = `ALREADY initialized`;
+    console.log('Activity already initialized');
+    return [
+      {
+        channel: ctx.channel,
+        to:      ctx.source,
+        message: reply,
+      },
+    ];
+  }
+
+  const playerName = ctx.player.display_name;
+
+
 
   //is start? --> run on_start triggers IN ORDER
   const reply = `check logs`;

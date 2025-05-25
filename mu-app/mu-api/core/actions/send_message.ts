@@ -2,7 +2,7 @@ import type { ActionFn } from '../../../shared/types';
 import type { MessageContext, OutgoingTrigger } from '../../../shared/types';
 
 /**
- * Action handler for sending a literal message.
+ * Send a literal (not LLM generated) message
  */
 export const send_message: ActionFn<{ literal: string }> = async (arg, ctx) => {
   return [{
