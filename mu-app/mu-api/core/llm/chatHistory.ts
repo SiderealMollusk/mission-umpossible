@@ -11,15 +11,34 @@ function getDbClient() {
   return new Client({ connectionString: process.env.DATABASE_URL });
 }
 
+async function getGameConfig(key: string): Promise<string | null> {
+  const client = getDbClient();
+  await client.connect();
+  try {
+    const res = await client.query<{ value: string }>(
+      `SELECT value FROM game_config WHERE key = $1 LIMIT 1`,
+      [key]
+    );
+    return (res.rowCount ?? 0) > 0 ? res.rows[0].value : null;
+  } finally {
+    await client.end();
+  }
+}
+
 /**
  * Load the most recent chat history for a given activity state.
  * @param activityStateId UUID of the activity_state row
- * @param limit Maximum number of turns to retrieve (default 20)
+ * @param limit Maximum number of turns to retrieve (default 10)
  */
 export async function loadChatHistory(
   activityStateId: string,
-  limit: number = 20
+  limit?: number
 ): Promise<ChatTurn[]> {
+  if (limit === undefined) {
+    const cfg = await getGameConfig('n_chatTurns');
+    const n = cfg ? parseInt(cfg, 10) : NaN;
+    limit = Number.isInteger(n) ? n : 10;
+  }
   const client = getDbClient();
   await client.connect();
   try {
@@ -51,6 +70,10 @@ export async function loadChatHistory(
  * @param ctx Full MessageContext for this incoming message
  */
 export async function recordIncoming(ctx: MessageContext): Promise<void> {
+  if (!ctx.activity?.state?.id) {
+    console.log(`⚠️ chatHistory: skip incoming, no activityStateId`);
+    return;
+  }
   const client = getDbClient();
   await client.connect();
   console.log(`📝 chatHistory: incoming activityStateId=${ctx.activity?.state?.id} from=${ctx.character.id} to=${ctx.npcCharacter?.id || '[]'} content="${ctx.text}" transport=${ctx.channel}`);
@@ -82,6 +105,10 @@ export async function recordOutgoing(
   ctx: MessageContext,
   trig: OutgoingTrigger
 ): Promise<void> {
+  if (!ctx.activity?.state?.id) {
+    console.log(`⚠️ chatHistory: skip outgoing, no activityStateId`);
+    return;
+  }
   const client = getDbClient();
   await client.connect();
   console.log(`📝 chatHistory: outgoing activityStateId=${ctx.activity?.state?.id} from=${ctx.npcCharacter?.id || ctx.character.id} to=${ctx.character.id} content="${trig.message}" transport=${trig.channel}`);

@@ -1,6 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 import type { MessageContext, OutgoingTrigger } from '../../shared/types';
 import { loadChatHistory } from './llm/chatHistory';
+import { buildSystemMessages } from './llm/buildSystemMessage';
 
 // Initialize Google Gemini client with API key from environment
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -13,6 +14,10 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 export async function characterChatResponse(
   ctx: MessageContext
 ): Promise<OutgoingTrigger[]> {
+  // Build system-level instructions based on context
+  const systemMessages = buildSystemMessages(ctx);
+  const systemPrompt = systemMessages.join('\n') + '\n';
+
   // Load full chat history for this activity
   const history = ctx.activity?.state?.id
     ? await loadChatHistory(ctx.activity.state.id, 1000)
@@ -29,12 +34,11 @@ export async function characterChatResponse(
 
   // Build a formatted prompt from the context (simplified for now)
   const prompt = `
+${systemPrompt}
 Chat history:
 ${transcript}
 
-You are an NPC in a text-based RPG. Use Markdown formatting for your replies.
 Player said: "${ctx.text}"
-Respond as the character ${ctx.npcCharacter?.name || 'Unknown'} with a fully formatted message.
 `;
   // Call Gemini to generate the response
   const result = await ai.models.generateContent({

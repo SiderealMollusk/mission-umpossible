@@ -6,8 +6,12 @@ export interface Character {
   id: string;
   /** Display name of the character */
   name: string;
-  /** JSON blob of character attributes or stats */
-  attributes: Record<string, any>;
+  /** Species of the character (nullable) */
+  species: string | null;
+  /** Narrative backstory for the character (nullable) */
+  backstory: string | null;
+  /** Roleplay notes (nullable) */
+  rpNotes: string | null;
   /** Timestamp when the character was created */
   createdAt: Date;
 }
