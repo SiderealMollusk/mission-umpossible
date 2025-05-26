@@ -1,3 +1,7 @@
+/**
+ * JSON schema declaration for a Gemini function/tool.
+ */
+
 export type ActivityTrigger =
   | {
       fn: "send_message";
@@ -12,6 +16,8 @@ export interface ActivitySpec {
   description: string;
   contact_character: string;
   instructions?: string;
+  chat_tools?: string[];
+  to_finish?: string[];
   on_start?: ActivityTrigger[];
   on_finish?: ActivityTrigger[];
 }
