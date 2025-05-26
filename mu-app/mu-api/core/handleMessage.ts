@@ -1,6 +1,7 @@
 import { MessageContext, OutgoingTrigger } from '../../shared/types';
 import { getDbClient } from '../db';
 import { actionHandlers } from './actions';
+import { characterChatResponse } from './characterChatResponse';
 
 /**
  * Stub business logic handler: logs context and returns no triggers.
@@ -19,8 +20,8 @@ export async function handleMessage(ctx: MessageContext): Promise<OutgoingTrigge
     await client.connect();
     try {
       const outgoing: OutgoingTrigger[] = [];
-      for (const trigger of spec.on_start ?? []) {
-        const handler = actionHandlers[trigger.fn];
+      for (const trigger of spec.on_start ?? []) {  //get the strings from json
+        const handler = actionHandlers[trigger.fn]; //use string to get fn from function map
         if (!handler) {
           console.warn(`No handler for trigger ${trigger.fn}`);
           continue;
@@ -44,31 +45,6 @@ export async function handleMessage(ctx: MessageContext): Promise<OutgoingTrigge
     }
   }
 
-  // If activity is already initialized, send a one-time acknowledgement
-  if (ctx.activity?.state && ctx.activity.state.payload.initialized) {
-    const reply = `ALREADY initialized`;
-    console.log('Activity already initialized');
-    return [
-      {
-        channel: ctx.channel,
-        to:      ctx.source,
-        message: reply,
-      },
-    ];
-  }
-
-  const playerName = ctx.player.display_name;
-
-
-
-  //is start? --> run on_start triggers IN ORDER
-  const reply = `check logs`;
-  console.log('Full MessageContext:', JSON.stringify(ctx, null, 2));
-  return [
-    {
-      channel: ctx.channel,
-      to: ctx.source,
-      message: reply,
-    },
-  ];
+  // If activity is already initialized, delegate to chatResponse
+  return await characterChatResponse(ctx);
 }

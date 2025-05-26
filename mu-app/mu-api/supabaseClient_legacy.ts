@@ -1,3 +1,7 @@
+/****
+ * @deprecated Supabase client - legacy support only.
+ * Use the PostgreSQL client via getDbClient() instead.
+ */
 import { createClient } from '@supabase/supabase-js';
 import 'dotenv/config';
 

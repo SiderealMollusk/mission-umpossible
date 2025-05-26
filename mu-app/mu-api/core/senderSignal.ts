@@ -1,5 +1,3 @@
-
-
 import fetch from 'node-fetch';
 
 export async function sendViaSignal({
@@ -8,7 +6,7 @@ export async function sendViaSignal({
 }: {
   to: string;
   message: string;
-}) {
+}): Promise<{ ok: boolean; status?: number; data?: any; error?: any }> {
   try {
     if (!process.env.SIGNAL_NUMBER) {
       console.error('[Signal Config Error] SIGNAL_NUMBER is undefined');
@@ -32,13 +30,21 @@ export async function sendViaSignal({
       }),
     });
 
-    if (!response.ok) {
-      const text = await response.text();
-      console.error('[Signal Error]', response.status, text);
-    } else {
-      console.log('[Signal] ✅ Message sent to', to);
+    let data: any;
+    try {
+      data = await response.json();
+    } catch {
+      data = null;
     }
+
+    if (!response.ok) {
+      console.error('[Signal Error]', response.status, data);
+      return { ok: false, status: response.status, error: data };
+    }
+    console.log('[Signal] ✅ Message sent to', to);
+    return { ok: true, status: response.status, data };
   } catch (err) {
     console.error('[Signal] ❌ Failed to send message:', err);
+    return { ok: false, error: err };
   }
 }

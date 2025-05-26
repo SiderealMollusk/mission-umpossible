@@ -9,6 +9,7 @@ import { Player } from '../../shared/models/Player';
 import { Character } from '../../shared/models/Character';
 import { ActivityState } from '../../shared/models/ActivityState';
 import { Activity } from '../../shared/models/Activity';
+import { recordIncoming, recordOutgoing } from './llm/chatHistory';
 
 export async function dispatchIncoming(batch: IncomingMessage[]): Promise<void> {
   const client = getDbClient();
@@ -139,6 +140,13 @@ export async function dispatchIncoming(batch: IncomingMessage[]): Promise<void> 
         raw,
       };
 
+      // Persist inbound message
+      try {
+        await recordIncoming(ctx);
+      } catch (err) {
+        console.error('Failed to record incoming chat turn:', err);
+      }
+
       // 7. Invoke business logic
       let triggers: OutgoingTrigger[];
       try {
@@ -151,11 +159,17 @@ export async function dispatchIncoming(batch: IncomingMessage[]): Promise<void> 
         continue;
       }
 
-      // 8. Dispatch outgoing triggers
-      try {
-        await sendTriggers(triggers);
-      } catch (err) {
-        console.error('sendTriggers error for', triggers, err);
+      // 8. Dispatch outgoing triggers and record successes
+      const results = await sendTriggers(triggers);
+      for (let i = 0; i < results.length; i++) {
+        const res = results[i];
+        if (res.ok) {
+          try {
+            await recordOutgoing(ctx, triggers[i]);
+          } catch (err) {
+            console.error('Failed to record outgoing chat turn:', err);
+          }
+        }
       }
     }
   } finally {
