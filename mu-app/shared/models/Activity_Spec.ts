@@ -1,4 +1,4 @@
-import { toolsMap } from '../../mu-api/core/llm/tools';
+import { toolsMap } from '../../mu-api/core/llm/chatAnalysis';
 /**
  * JSON schema declaration for a Gemini function/tool.
  */

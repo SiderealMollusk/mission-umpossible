@@ -63,6 +63,50 @@ const consentSchema = {
   required: ['consent'],
 } as const;
 
+// Tool 4: Analyze if transcript meets given criteria
+const meetsCriteriaSchema = {
+  type: Type.OBJECT,
+  properties: {
+    meets: { type: Type.BOOLEAN },
+  },
+  required: ['meets'],
+} as const;
+
+/**
+ * Determine whether the given transcript meets the specified criteria.
+ * @param text The user transcript or message.
+ * @param criteria Description of the criteria to check.
+ */
+export async function meetsCriteria(text: string, criteria: string): Promise<{ meets: boolean }> {
+  const prompt = `
+The user has said:
+"${text}"
+Does this meet the following criteria?
+"${criteria}"
+
+Return your answer as a JSON object with one boolean field: "meets".
+`;
+  const result = await ai.models.generateContent({
+    model: 'gemini-2.0-flash',
+    contents: prompt,
+    config: {
+      responseMimeType: 'application/json',
+      responseSchema: meetsCriteriaSchema,
+    },
+  });
+  let parsed: { meets: boolean };
+  try {
+    parsed = JSON.parse(result.text ?? '');
+  } catch (e) {
+    throw new Error('Failed to parse JSON from Gemini: ' + e);
+  }
+  if (typeof parsed.meets !== 'boolean') {
+    throw new Error('Parsed response does not contain valid boolean fields');
+  }
+  console.log(`message meets criteria '${criteria}'`);
+  return { meets: parsed.meets };
+}
+
 export async function analyzeUserTimeliness(text: string): Promise<{ isLate: boolean }> {
   const prompt = `
 Analyze the following user message:
@@ -140,8 +184,9 @@ export async function useTools(ctx: MessageContext): Promise<void> {
 }
 
 // Dictionary of tool functions for dynamic invocation
-export const toolsMap: Record<string, (text: string) => Promise<any>> = {
+export const toolsMap: Record<string, (...args: any[]) => Promise<any>> = {
   analyzeUserAffect,
   analyzeUserTimeliness,
   detectConsent,
+  meetsCriteria,
 };

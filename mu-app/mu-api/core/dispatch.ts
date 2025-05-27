@@ -171,6 +171,9 @@ export async function dispatchIncoming(batch: IncomingMessage[]): Promise<void> 
           }
         }
       }
+      if(ctx.isFinished){
+        console.log("Message handled and dispatched. On_Finish Here")
+      }
     }
   } finally {
     await client.end();

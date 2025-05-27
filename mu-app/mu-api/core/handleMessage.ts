@@ -4,7 +4,14 @@ import { actionHandlers } from './actions';
 import { characterChatResponse } from './characterChatResponse';
 
 /**
- * Stub business logic handler: logs context and returns no triggers.
+ * HandleMessage accepts a transport agnostic message context ,
+ * - figures out what to do with it
+ * - based on activity state
+ * - Likely calls "chatResponse", which handles LLM stuff
+ * - executes a message side effects, and returns any messages to dispatch.
+ * 
+ * This script handles on_start from the spec
+ * - chatResponse handles use of chat tools, 
  */
 export async function handleMessage(ctx: MessageContext): Promise<OutgoingTrigger[]> {
   // Typing events: log and drop — handle first to avoid unnecessary DB work
