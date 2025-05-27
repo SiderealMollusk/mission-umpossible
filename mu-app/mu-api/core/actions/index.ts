@@ -6,11 +6,13 @@
 import { ActionFn } from '../../../shared/types';
 import { send_message } from './send_message';
 import { log_event } from './log_event';
+import { start_activity } from './start_activity';
 
 // ... more
 
 export const actionHandlers: Record<string, ActionFn> = {
   send_message,
   log_event,
+  start_activity,
   // etc
 };

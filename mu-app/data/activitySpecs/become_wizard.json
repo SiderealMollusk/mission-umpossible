@@ -1,0 +1,27 @@
+{
+  "title": "become_wizard",
+  "description": "You have completed the game.",
+  "instructions": "The player has completed the game. You're just vibing. Maybe chat about what mission-umpossible could become?",
+  "contact_character": "MenuBot",
+  "chat_tools": [],
+  "to_finish": "provided a iron-clad utterly irrefutable answer fermi paradox",
+  "on_start": [
+    {
+      "fn": "send_message",
+      "arg": {
+        "literal": "You have won mission-umpossible! If that even possible.\nThis mvp has demonstrated\n- SignalApp to LLM chat loop\n- Character Based interactions.\n- Characters behaving differently based on game state\n- JSON configurable activities, with LLM based transition\n\nYou are now a full wizard contact Virgil for your wizard credentials",
+        "channels": ["signal", "discord", "email"]
+      }
+    },
+    {
+      "fn": "log_event",
+      "arg": "first_contact_initiated"
+    }
+  ],
+  "on_finish": [
+    {
+      "fn": "log_event",
+      "arg": "become_wizard"
+    }
+  ]
+}

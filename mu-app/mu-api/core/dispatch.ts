@@ -4,6 +4,7 @@
 import { getDbClient } from '../db';
 import { IncomingMessage, MessageContext, OutgoingTrigger } from '../../shared/types';
 import { handleMessage } from './handleMessage';
+import { actionHandlers } from './actions';
 import { sendTriggers } from './sender';
 import { Player } from '../../shared/models/Player';
 import { Character } from '../../shared/models/Character';
@@ -172,7 +173,36 @@ export async function dispatchIncoming(batch: IncomingMessage[]): Promise<void> 
         }
       }
       if(ctx.isFinished){
-        console.log("Message handled and dispatched. On_Finish Here")
+        const spec = ctx.activity?.definition.spec;
+        if (spec?.on_finish) {
+          console.log('Running on_finish triggers');
+          // Execute each on_finish trigger via actionHandlers
+          const finishOutgoing: OutgoingTrigger[] = [];
+          for (const trigger of spec.on_finish) {
+            const handler = actionHandlers[trigger.fn];
+            if (!handler) {
+              console.warn(`No handler for on_finish trigger ${trigger.fn}`);
+              continue;
+            }
+            const results = await handler(trigger.arg as any, ctx);
+            if (Array.isArray(results)) {
+              finishOutgoing.push(...results);
+            }
+          }
+          // Dispatch on_finish outgoing triggers
+          if (finishOutgoing.length > 0) {
+            const finishResults = await sendTriggers(finishOutgoing);
+            for (let i = 0; i < finishResults.length; i++) {
+              if (finishResults[i].ok) {
+                try {
+                  await recordOutgoing(ctx, finishOutgoing[i]);
+                } catch (err) {
+                  console.error('Failed to record on_finish outgoing chat turn:', err);
+                }
+              }
+            }
+          }
+        }
       }
     }
   } finally {

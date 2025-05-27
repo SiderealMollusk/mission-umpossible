@@ -20,25 +20,12 @@ export async function handleMessage(ctx: MessageContext): Promise<OutgoingTrigge
     return [];
   }
 
-  // If this is a fresh activity, run its on_start triggers
+  // If this is a fresh activity, run its on_start triggers or mark initialized
   if (ctx.activity?.state && !ctx.activity.state.payload.initialized) {
     const spec = ctx.activity.definition.spec;
     const client = getDbClient();
     await client.connect();
     try {
-      const outgoing: OutgoingTrigger[] = [];
-      for (const trigger of spec.on_start ?? []) {  //get the strings from json
-        const handler = actionHandlers[trigger.fn]; //use string to get fn from function map
-        if (!handler) {
-          console.warn(`No handler for trigger ${trigger.fn}`);
-          continue;
-        }
-        // Execute and collect any outgoing triggers
-        const results = await handler(trigger.arg as any, ctx);
-        if (Array.isArray(results)) {
-          outgoing.push(...results);
-        }
-      }
       // Mark initialized so this block doesn't run again
       await client.query(
         `UPDATE activity_states
@@ -46,12 +33,31 @@ export async function handleMessage(ctx: MessageContext): Promise<OutgoingTrigge
          WHERE id = $1`,
         [ctx.activity.state.id]
       );
-      return outgoing;
-    } finally {
+
+      if (spec.on_start?.length) {
+        const outgoing: OutgoingTrigger[] = [];
+        for (const trigger of spec.on_start) {
+          const handler = actionHandlers[trigger.fn];
+          if (!handler) {
+            console.warn(`No handler for trigger ${trigger.fn}`);
+            continue;
+          }
+          const results = await handler(trigger.arg as any, ctx);
+          if (Array.isArray(results)) {
+            outgoing.push(...results);
+          }
+        }
+        return outgoing;
+      }
+
+      // No on_start triggers: run normal chat response for the new activity immediately
       await client.end();
+      return await characterChatResponse(ctx);
+    } finally {
+      // client.end() removed here to avoid double closing
     }
   }
 
-  // If activity is already initialized, delegate to chatResponse
+  // If activity is already initialized or no triggers to run, delegate to chatResponse
   return await characterChatResponse(ctx);
 }

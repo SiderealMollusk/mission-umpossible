@@ -1,0 +1,31 @@
+{
+  "title": "first_contact",
+  "description": "Initiates a signal from MenuBot (o?o) to confirm the player's willingness to engage in Mission-Umpossible.",
+  "instructions": "You're job is to get the player to agreed to play 'mission-umpossible'. you need them to press the metaphorical start-button",
+  "contact_character": "MenuBot",
+  "chat_tools": [],
+  "to_finish": "the user has explicitly agreed to proceed with the mission-umpossible",
+  "on_start": [
+    {
+      "fn": "send_message",
+      "arg": {
+        "literal": "(o?o) You are being contacted across the field of consciousness.",
+        "channels": ["signal", "discord", "email"]
+      }
+    },
+    {
+      "fn": "log_event",
+      "arg": "first_contact_initiated"
+    }
+  ],
+  "on_finish": [
+    {
+      "fn": "log_event",
+      "arg": "first_contact_resolved"
+    },
+    {
+        "fn" : "start_activity",
+        "arg" : "nowprint_01_agreeToBreath"
+    }
+  ]
+}
