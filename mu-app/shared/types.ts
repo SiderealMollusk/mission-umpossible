@@ -80,7 +80,17 @@ export interface MessageContext {
   text?: IncomingMessage['text'];
   typing?: IncomingMessage['typing'];
   attachments?: IncomingMessage['attachments'];
-  conversationHistory?: ChatTurn[];
+  conversationHistory?: ChatTurn[]; //might not get used?
+  transcript?: string;
+  /**
+   * Results returned by any called tools in this turn.
+   */
+  toolResults?: Record<string, any>;
+
+  /**
+   * Indicates whether the activity is marked as finished (e.g., consent given).
+   */
+  isFinished?: boolean;
   timestamp: IncomingMessage['timestamp'];
   raw: any;
 }

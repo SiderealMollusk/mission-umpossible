@@ -1,7 +1,8 @@
 import { GoogleGenAI } from '@google/genai';
 import type { MessageContext, OutgoingTrigger } from '../../shared/types';
 import { loadChatHistory } from './llm/chatHistory';
-import { buildSystemMessages } from './llm/buildSystemMessage';
+import { buildSystemMessages } from '../core/llm/buildSystemMessage';
+import { useTools } from './llm/useTools';
 
 // Initialize Google Gemini client with API key from environment
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -12,6 +13,8 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
  * Core chat logic for an initialized activity.
  */
 export async function characterChatResponse(
+
+//PHASE 1 FETCH HISTORY
   ctx: MessageContext
 ): Promise<OutgoingTrigger[]> {
   // Build system-level instructions based on context
@@ -31,8 +34,14 @@ export async function characterChatResponse(
       return `${speaker}: ${turn.content}`;
     })
     .join('\n');
+ctx.transcript = transcript;
+//PHASE 2 MAKE TOOL CALLS (populate ctx.toolResults)
+await useTools(ctx);
 
-  // Build a formatted prompt from the context (simplified for now)
+//PHASE 3 CHECK IF ACTIVITY FINISHED
+
+
+//PHASE 4 GENERATE NARRITIVE RESPONSE
   const prompt = `
 ${systemPrompt}
 Chat history:
