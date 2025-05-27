@@ -2,7 +2,7 @@ import { GoogleGenAI } from '@google/genai';
 import type { MessageContext, OutgoingTrigger } from '../../shared/types';
 import { loadChatHistory } from './llm/chatHistory';
 import { buildSystemMessages } from '../core/llm/buildSystemMessage';
-import { useTools } from './llm/useTools';
+import { toolsMap } from './llm/tools';
 
 // Initialize Google Gemini client with API key from environment
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -36,10 +36,28 @@ export async function characterChatResponse(
     .join('\n');
 ctx.transcript = transcript;
 //PHASE 2 MAKE TOOL CALLS (populate ctx.toolResults)
-await useTools(ctx);
+//await useTools(ctx); works as an example, but until I know what I want better it remains just that.
 
 //PHASE 3 CHECK IF ACTIVITY FINISHED
-
+const fnName = ctx.activity?.definition.spec.to_finish;
+if (fnName) {
+  const finishedTool = toolsMap[fnName as keyof typeof toolsMap];
+  if (typeof finishedTool !== 'function') {
+    console.error(`Finish-check tool "${fnName}" not found in toolsMap.`);
+  } else {
+    const result = await finishedTool(ctx.text ?? '');
+    const finished = typeof result === 'object'
+      ? Object.values(result).some(val => val === true)
+      : Boolean(result);
+    if (finished) {
+      console.log(`Activity finished by "${fnName}".`);
+    } else {
+      console.log('Finish-check returned false; continuing dialogue.');
+    }
+  }
+} else {
+  console.log('No on_finish spec defined; proceeding to narrative response.');
+}
 
 //PHASE 4 GENERATE NARRITIVE RESPONSE
   const prompt = `

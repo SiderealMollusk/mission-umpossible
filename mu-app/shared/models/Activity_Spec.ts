@@ -1,3 +1,4 @@
+import { toolsMap } from '../../mu-api/core/llm/tools';
 /**
  * JSON schema declaration for a Gemini function/tool.
  */
@@ -17,7 +18,8 @@ export interface ActivitySpec {
   contact_character: string;
   instructions?: string;
   chat_tools?: string[];
-  to_finish?: string[];
+  /** Must match a key in toolsMap */
+  to_finish?: keyof typeof toolsMap;
   on_start?: ActivityTrigger[];
   on_finish?: ActivityTrigger[];
 }
