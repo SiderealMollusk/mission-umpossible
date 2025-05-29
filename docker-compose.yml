@@ -1,24 +1,5 @@
 services:
-  flask:
-    build: 
-      context: ./flask_app
-      dockerfile: Dockerfile
-    environment:
-      - FLASK_RUN_HOST=0.0.0.0
-    restart: always
-    stop_signal: SIGINT
 
-  # nginx:
-  #   build: 
-  #     context: ./nginx
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8755:8755"
-  #   depends_on:
-  #     - flask
-  #   # volumes:
-  #   #   - /home/austin/log/nginx:/var/log/nginx
-  #   restart: always
 
   signal-api:
     image: bbernhard/signal-cli-rest-api:latest
@@ -50,25 +31,86 @@ services:
     environment:
       - CF_TOKEN
 
-  # mu-app: unified backend + admin dev server
-  # Assumes Dockerfile exists at ./mu-app/Dockerfile
-  # Must expose the ports for both frontend and API internally
-  mu-app:
+  # mu-app:
+  #   build:
+  #     context: ./mu-app
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "5176:5176"  # backend API (adjust if different)
+  #     - "5173:5173"  # frontend dev (adjust if different)
+  #   volumes:
+  #     - ./mu-app:/app  # enables live editing
+  #   command: >
+  #     sh -c "concurrently \
+  #       \"nodemon --watch mu-api --ext js,ts --exec \\\"npm --prefix mu-api run dev\\\"\" \
+  #       \"nodemon --watch mu-admin --ext js,ts,jsx,tsx --exec \\\"npm --prefix mu-admin run dev\\\"\" \
+  #       \"nodemon --watch mu-hex-api --ext js,ts --exec \\\"npm --prefix mu-hex-api run dev\\\"\""
+  #   environment:
+  #     - NODE_ENV=development
+  #     - CHOKIDAR_USEPOLLING=true  # needed for Vite polling in Docker
+  #     - SIGNAL_NUMBER=+15107302276
+  #   depends_on:
+  #     - signal-api
+  #   restart: always
+
+  # nginx:
+  #   build: 
+  #     context: ./nginx
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8755:8755"
+  #   depends_on:
+  #     - flask
+  #   # volumes:
+  #   #   - /home/austin/log/nginx:/var/log/nginx
+  #   restart: always
+  # mu-app:
+  #   build:
+  #     context: ./mu-app
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "5176:5176"  # backend API (adjust if different)
+  #     - "5173:5173"  # frontend dev (adjust if different)
+  #   volumes:
+  #     - ./mu-app:/app  # enables live editing
+  #   command: >
+  #     sh -c "concurrently \
+  #       \"nodemon --watch mu-api --ext js,ts --exec \\\"npm --prefix mu-api run dev\\\"\" \
+  #       \"nodemon --watch mu-admin --ext js,ts,jsx,tsx --exec \\\"npm --prefix mu-admin run dev\\\"\" \
+  #       \"nodemon --watch mu-hex-api --ext js,ts --exec \\\"npm --prefix mu-hex-api run dev\\\"\""
+  #   environment:
+  #     - NODE_ENV=development
+  #     - CHOKIDAR_USEPOLLING=true  # needed for Vite polling in Docker
+  #     - SIGNAL_NUMBER=+15107302276
+  #   depends_on:
+  #     - signal-api
+  #   restart: always
+
+  # flask:
+  #   build: 
+  #     context: ./flask_app
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     - FLASK_RUN_HOST=0.0.0.0
+  #   restart: always
+  #   stop_signal: SIGINT
+
+  # mu-hex-admin:
+  mu-hex-admin-old:
     build:
-      context: ./mu-app
+      context: ./mu-hex-admin-old
       dockerfile: Dockerfile
     ports:
-      - "5176:5176"  # backend API (adjust if different)
-      - "5173:5173"  # frontend dev (adjust if different)
+      - "5173:5173"
     volumes:
-      - ./mu-app:/app  # enables live editing
+      - ./mu-hex-admin-old:/app
+      - mu-hex-admin-node-modules:/app/node_modules
     environment:
       - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true  # needed for Vite polling in Docker
-      - SIGNAL_NUMBER=+15107302276
-    depends_on:
-      - signal-api
+      - CHOKIDAR_USEPOLLING=true
+    command: npm run dev
     restart: always
 
 volumes:
   signal-watcher-node-modules:
+  mu-hex-admin-node-modules:

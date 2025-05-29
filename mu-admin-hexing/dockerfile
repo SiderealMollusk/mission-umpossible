@@ -1,0 +1,21 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+RUN apk add --no-cache procps
+
+# Install global dev tools (optional)
+RUN npm install -g concurrently
+RUN npm install -g nodemon
+
+# Frontend install
+WORKDIR /app/mu-admin
+COPY mu-admin/package*.json ./
+RUN npm install
+
+# Copy everything else
+WORKDIR /app
+COPY . .
+
+# Start servers correctly
+CMD nodemon --watch mu-admin --ext js,ts,jsx,tsx --exec "npm --prefix mu-admin run dev"

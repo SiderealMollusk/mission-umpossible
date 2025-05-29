@@ -1,4 +1,4 @@
-FROM node:20-slim
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y procps
 
 # Install global dev tools (optional)
 RUN npm install -g concurrently
+RUN npm install -g nodemon
 
 # Frontend install
 WORKDIR /app/mu-admin
@@ -23,5 +24,6 @@ COPY . .
 
 # Start servers correctly
 CMD concurrently \
-  "npm --prefix mu-api run dev" \
-  "npm --prefix mu-admin run dev"
+  "nodemon --watch mu-api --ext js,ts --exec \"npm --prefix mu-api run dev\"" \
+  "nodemon --watch mu-admin --ext js,ts,jsx,tsx --exec \"npm --prefix mu-admin run dev\"" \
+  "nodemon --watch mu-hex-api --ext js,ts --exec \"npm --prefix mu-hex-api run dev\""
