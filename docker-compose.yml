@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     environment:
       - FLASK_RUN_HOST=0.0.0.0
+    volumes:
+      - "${ENV_PATH}:/app/.env"
     restart: always
     stop_signal: SIGINT
 
@@ -34,6 +36,7 @@ services:
     volumes:
       - ./signal-watcher:/app
       - signal-watcher-node-modules:/app/node_modules
+      - "${ENV_PATH}:/app/.env"
     environment:
       SIGNAL_NUMBER: "+15107302276"
       SIGNAL_API: "http://signal-api:8080"
@@ -62,6 +65,8 @@ services:
       - "5173:5173"  # frontend dev (adjust if different)
     volumes:
       - ./mu-app:/app  # enables live editing
+      - "${ENV_PATH}:/app/mu-api/.env"
+      - "${ENV_PATH}:/app/mu-admin/.env"
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true  # needed for Vite polling in Docker

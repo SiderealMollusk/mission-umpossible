@@ -1,0 +1,4 @@
+# Deprecated file: was previously .env, now ignored
+VITE_SUPABASE_URL=https://pjilllyoorjqeqamnqqw.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqaWxsbHlvb3JqcWVxYW1ucXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2MDAzNTksImV4cCI6MjA2MTE3NjM1OX0.Dl9zqs6PEmXsVoxv5RdmmziaHFcd0Pa3tHdphC4JvEk
+VITE_API_URL=https://mu-api.virgil.info

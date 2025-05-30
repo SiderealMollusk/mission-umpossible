@@ -1,0 +1,7 @@
+# Deprecated file: was previously .env, now ignored
+  DATABASE_URL="postgresql://postgres.pjilllyoorjqeqamnqqw:hopeinthekaliyuga@aws-0-us-east-1.pooler.supabase.com:5432/postgres"
+./mu-app/mu-admin/.env:
+  VITE_SUPABASE_URL=https://pjilllyoorjqeqamnqqw.supabase.co
+  VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqaWxsbHlvb3JqcWVxYW1ucXF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2MDAzNTksImV4cCI6MjA2MTE3NjM1OX0.Dl9zqs6PEmXsVoxv5RdmmziaHFcd0Pa3tHdphC4JvEk
+  ADMIN_USER_ID=503ec88d-4490-4f4a-b0e8-3387fd10ec17
+  GEMINI_API_KEY=AIzaSyChIg-GhOMZxXIhHZICG63ibGjiZLsbnwo
